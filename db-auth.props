@@ -1,0 +1,11 @@
+# Connection to the db
+databases=foo,bar,baz
+
+foo.url=jdbc:postgresql://sat.suse.de:5432/spaceschema
+foo.user=spaceuser
+foo.password=spacepassword
+
+bar.url=jdbc:postgresql://sat.suse.de:5432/spaceschema
+bar.user=spaceuser
+bar.password=spacepassword
+
