@@ -362,7 +362,7 @@ public class SQLMapper {
         try {
             bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             while (null != (line = bufferedReader.readLine())) {
-                buff.append(line);
+                buff.append(line).append("\n");
             }
         } catch (Exception ex) {
             Logger.getLogger(SQLMapper.class.getName()).log(Level.WARNING, null, ex);
