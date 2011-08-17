@@ -3,6 +3,7 @@ package de.suse.lib.sqlmap;
 import de.suse.lib.sqlmap.drivers.H2EmbeddedDriver;
 import de.suse.lib.sqlmap.drivers.ApacheDerbyEmbeddedDriver;
 import de.suse.lib.sqlmap.drivers.DBConnectionDriver;
+import de.suse.lib.sqlmap.drivers.H2EmbeddedServerDriver;
 import de.suse.lib.sqlmap.drivers.PgSQLDriver;
 import java.io.BufferedReader;
 import java.io.File;
@@ -126,12 +127,15 @@ public class SQLMapper {
         ConnectionInfo info = this.connectionInfo.get(this.tag);
         if (info.getVendor().equals("postgresql")) {
             this.connectionDriver = new PgSQLDriver(info.getUrl()).setUseSSL(false).connect(info.getUser(), info.getPassword());
-        } if (info.getVendor().equals("derby")) {
+        } else if (info.getVendor().equals("derby")) {
             System.err.println("INFO: " + info.getUrl());
             this.connectionDriver = new ApacheDerbyEmbeddedDriver(info);
-        } if (info.getVendor().equals("h2")) {
+        } else if (info.getVendor().equals("h2")) {
             System.err.println("INFO: " + info.getUrl());
             this.connectionDriver = new H2EmbeddedDriver(info);
+        } else if (info.getVendor().equals("h2:tcp")) {
+            System.err.println("INFO: " + info.getUrl());
+            this.connectionDriver = new H2EmbeddedServerDriver(info);
         } else {
             throw new Exception(String.format("Vendor \"%s\" is not supported.", info.getVendor()));
         }

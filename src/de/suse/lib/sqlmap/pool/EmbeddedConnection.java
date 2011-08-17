@@ -63,6 +63,7 @@ class EmbeddedConnection implements Connection {
         return timestamp;
     }
 
+    @Override
     public void close() throws SQLException {
         pool.returnConnection(this);
     }
@@ -75,74 +76,92 @@ class EmbeddedConnection implements Connection {
         return conn;
     }
 
+    @Override
     public PreparedStatement prepareStatement(String sql) throws SQLException {
         return conn.prepareStatement(sql);
     }
 
+    @Override
     public CallableStatement prepareCall(String sql) throws SQLException {
         return conn.prepareCall(sql);
     }
 
+    @Override
     public Statement createStatement() throws SQLException {
         return conn.createStatement();
     }
 
+    @Override
     public String nativeSQL(String sql) throws SQLException {
         return conn.nativeSQL(sql);
     }
 
+    @Override
     public void setAutoCommit(boolean autoCommit) throws SQLException {
         conn.setAutoCommit(autoCommit);
     }
 
+    @Override
     public boolean getAutoCommit() throws SQLException {
         return conn.getAutoCommit();
     }
 
+    @Override
     public void commit() throws SQLException {
         conn.commit();
     }
 
+    @Override
     public void rollback() throws SQLException {
         conn.rollback();
     }
 
+    @Override
     public boolean isClosed() throws SQLException {
         return conn.isClosed();
     }
 
+    @Override
     public DatabaseMetaData getMetaData() throws SQLException {
         return conn.getMetaData();
     }
 
+    @Override
     public void setReadOnly(boolean readOnly) throws SQLException {
         conn.setReadOnly(readOnly);
     }
 
+    @Override
     public boolean isReadOnly() throws SQLException {
         return conn.isReadOnly();
     }
 
+    @Override
     public void setCatalog(String catalog) throws SQLException {
         conn.setCatalog(catalog);
     }
 
+    @Override
     public String getCatalog() throws SQLException {
         return conn.getCatalog();
     }
 
+    @Override
     public void setTransactionIsolation(int level) throws SQLException {
         conn.setTransactionIsolation(level);
     }
 
+    @Override
     public int getTransactionIsolation() throws SQLException {
         return conn.getTransactionIsolation();
     }
 
+    @Override
     public SQLWarning getWarnings() throws SQLException {
         return conn.getWarnings();
     }
 
+    @Override
     public void clearWarnings() throws SQLException {
         conn.clearWarnings();
     }
