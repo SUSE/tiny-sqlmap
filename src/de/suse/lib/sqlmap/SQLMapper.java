@@ -256,7 +256,12 @@ public class SQLMapper {
                 this.rollback();
                 throw new SQLIntegrityConstraintViolationException(ex);
             } catch (SQLException ex) {
-                Logger.getLogger(SQLMapper.class.getName()).log(Level.SEVERE, "SQL error while preparing: {0}", ex.getLocalizedMessage());
+                if (this.debug) {
+                    Logger.getLogger(SQLMapper.class.getName()).log(Level.SEVERE, "SQL error while preparing: {0}", ex.getLocalizedMessage());
+                } else {
+                    Logger.getLogger(SQLMapper.class.getName()).log(Level.SEVERE, "SQL query failed.");
+                }
+
                 this.rollback();
                 throw new SQLException(ex);
             } catch (Exception ex) {
