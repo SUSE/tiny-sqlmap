@@ -59,12 +59,22 @@ public class SQLMapper {
     private ConnectionCallback connectionCallback;
     private boolean debug = false;
     private String tag;
+    private boolean stderrVerbose = false;
     
     
     private void init(Properties config) throws SQLException {
         this.connectionInfo = new HashMap<String, ConnectionInfo>();
         this.parseConnectionInfo(config);
         this.connectionCallback = null;
+    }
+
+
+    /**
+     * Set STDERR verbose.
+     * @param stderrVerbose
+     */
+    public void setStderrVerbose(boolean stderrVerbose) {
+        this.stderrVerbose = stderrVerbose;
     }
 
 
@@ -145,25 +155,32 @@ public class SQLMapper {
         if (info.getVendor().equals("postgresql")) {
             this.connectionDriver = new PgSQLDriver(info.getUrl()).setUseSSL(false).connect(info.getUser(), info.getPassword());
         } else if (info.getVendor().equals("derby")) {
-            System.err.println("INFO: " + info.getUrl());
             this.connectionDriver = new ApacheDerbyEmbeddedDriver(info);
         } else if (info.getVendor().equals("h2")) {
-            System.err.println("INFO: " + info.getUrl());
             this.connectionDriver = new H2EmbeddedDriver(info);
         } else if (info.getVendor().equals("h2:tcp")) {
-            System.err.println("INFO: " + info.getUrl());
             this.connectionDriver = new H2EmbeddedServerDriver(info);
         } else {
             throw new Exception(String.format("Vendor \"%s\" is not supported.", info.getVendor()));
         }
 
+        if (this.stderrVerbose) {
+            System.err.println("INFO: " + info.getUrl());
+        }
+
         this.connectionDriver.setConnectionCallback(this.connectionCallback);
         this.connectionDriver.connect(info.getUser(), info.getPassword());
 
-        System.err.println("Connection: " + this.connectionDriver.getConnection());
+        if (this.stderrVerbose) {
+            System.err.println("Connection: " + this.connectionDriver.getConnection());
+        }
+
         String db = this.connectionDriver.getConnection().getMetaData().getDatabaseProductName();
         String url = this.connectionDriver.getConnection().getMetaData().getURL();
-        System.err.println("DB: " + db + ", URL: " + url);
+
+        if (this.stderrVerbose) {
+            System.err.println("DB: " + db + ", URL: " + url);
+        }
 
         return this;
     }
