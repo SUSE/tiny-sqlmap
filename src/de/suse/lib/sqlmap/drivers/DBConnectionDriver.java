@@ -54,4 +54,6 @@ public interface DBConnectionDriver {
     public Connection getConnection();
 
     public void setConnectionCallback(ConnectionCallback callback);
+
+    public String getDatabaseName();
 }

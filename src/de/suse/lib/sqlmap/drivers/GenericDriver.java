@@ -113,7 +113,8 @@ public abstract class GenericDriver implements DBConnectionDriver {
     }
     
 
-    protected String getDatabase() {
+    @Override
+    public String getDatabaseName() {
         return database;
     }
 

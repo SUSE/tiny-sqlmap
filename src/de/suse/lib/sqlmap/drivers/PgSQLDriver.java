@@ -102,7 +102,7 @@ public class PgSQLDriver extends GenericDriver {
             properties.setProperty("ssl", "true"); // In fact, "false" is also "true" here. :-(
         }
         try {
-            this.connection = DriverManager.getConnection(PgSQLDriver.PROTO + this.getHost() + ":" + this.getPort() + "/" + this.getDatabase(), properties);
+            this.connection = DriverManager.getConnection(PgSQLDriver.PROTO + this.getHost() + ":" + this.getPort() + "/" + this.getDatabaseName(), properties);
             if (this.callback != null) {
                 this.callback.onConnect();
             }

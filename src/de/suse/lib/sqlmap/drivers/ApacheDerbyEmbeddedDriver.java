@@ -65,12 +65,12 @@ public class ApacheDerbyEmbeddedDriver extends GenericDriver {
 
     @Override
     public ApacheDerbyEmbeddedDriver connect(String user, String password) throws Exception {
-        if (this.getDatabase() == null || this.getDatabase().isEmpty()) {
+        if (this.getDatabaseName() == null || this.getDatabaseName().isEmpty()) {
             throw new Exception("Unknown database.");
         }
 
         try {
-            String[] databaseUrlTokens = this.getDatabase().split(";", 2);
+            String[] databaseUrlTokens = this.getDatabaseName().split(";", 2);
             Map<String, String> queryParams = this.parseQuery(databaseUrlTokens.length == 2 ? databaseUrlTokens[1] : "");
             File database = new File(databaseUrlTokens[0]);
             if (!database.exists()) {

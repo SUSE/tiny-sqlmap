@@ -443,4 +443,14 @@ public class SQLMapper {
         this.connectionCallback = callback;
         return this;
     }
+
+
+    /**
+     * Get current database name.
+     * 
+     * @return
+     */
+    public String getDatabaseName() {
+        return this.connectionDriver.getDatabaseName();
+    }
 }

@@ -58,11 +58,11 @@ public class H2EmbeddedDriver extends GenericDriver {
 
     @Override
     public H2EmbeddedDriver connect(String user, String password) throws Exception {
-        if (this.getDatabase() == null || this.getDatabase().isEmpty()) {
+        if (this.getDatabaseName() == null || this.getDatabaseName().isEmpty()) {
             throw new Exception("Unknown database.");
         }
 
-        this.connection = DriverManager.getConnection("jdbc:h2:" + this.getDatabase(), this.info.getUser(), this.info.getPassword());
+        this.connection = DriverManager.getConnection("jdbc:h2:" + this.getDatabaseName(), this.info.getUser(), this.info.getPassword());
         return this;
     }
 }
