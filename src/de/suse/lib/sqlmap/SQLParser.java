@@ -102,6 +102,7 @@ public class SQLParser {
     public SQLParser parse(Map<?, ?> params) throws Exception {
         this.preparedStatement = null;
         this.values.clear();
+        List<SQLParser.Value> patterns = new ArrayList<SQLParser.Value>();
         String[] leftTokens = this.query.split("\\{");
         for (int i = 0; i < leftTokens.length; i++) {
             String token = leftTokens[i];
@@ -109,7 +110,12 @@ public class SQLParser {
                 token = token.split("\\}")[0];
                 if (token.contains(":") && token.indexOf(":") > 0) {
                     String[] typeAndVariable = token.split(":");
-                    this.values.add(new Value(typeAndVariable[0], typeAndVariable[1], params.get(typeAndVariable[1])));
+                    Value value = new Value(typeAndVariable[0], typeAndVariable[1], params.get(typeAndVariable[1]));
+                    if (value.getType().equals("sql")) {
+                        patterns.add(value);
+                    } else {
+                        this.values.add(value);
+                    }
                 } else {
                     throw new Exception("Illegal syntax: " + token);
                 }
@@ -117,8 +123,15 @@ public class SQLParser {
         }
 
         String prepQuery = this.query;
-        for (int i = 0; i < values.size(); i++) {
-            SQLParser.Value value = values.get(i);
+
+        // Render patterns (SQL injections)
+        for (SQLParser.Value value : patterns) {
+            prepQuery = prepQuery.replace(String.format("{%s:%s}", value.getType(), value.getVariable()),
+                                          value.getValue() != null ? value.getValue().toString().trim() : "");
+        }
+
+        // Render values
+        for (SQLParser.Value value : this.values) {
             prepQuery = prepQuery.replace(String.format("{%s:%s}", value.getType(), value.getVariable()), "?");
         }
 
