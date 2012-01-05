@@ -18,11 +18,10 @@ package de.suse.lib.sqlmap.drivers;
 
 import java.net.URISyntaxException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.postgresql.ds.PGConnectionPoolDataSource;
 
 
 /**
@@ -33,6 +32,7 @@ public class PgSQLDriver extends GenericDriver {
     private final static String PROTO = "jdbc:postgresql://";
     private boolean useSSL = true;
     private final static String DRIVER = "org.postgresql.Driver";
+    private PGConnectionPoolDataSource connectionPoolDataSource;
 
 
     /**
@@ -52,16 +52,6 @@ public class PgSQLDriver extends GenericDriver {
         Class.forName(PgSQLDriver.DRIVER);
     }
 
-    
-    /**
-     * Create a driver out of the connection.
-     * 
-     * @param conn 
-     */
-    public PgSQLDriver(Connection conn) {
-        super(conn);
-    }
-
 
     @Override
     protected void parseURL() throws SQLException {
@@ -75,7 +65,7 @@ public class PgSQLDriver extends GenericDriver {
         }
     }
 
-    
+
     /**
      * Use SSL connection?
      * 
@@ -93,6 +83,7 @@ public class PgSQLDriver extends GenericDriver {
      * @param user
      * @param password 
      */
+    /*
     @Override
     public PgSQLDriver connect(String user, String password) throws Exception {
         Properties properties = new Properties();
@@ -113,10 +104,33 @@ public class PgSQLDriver extends GenericDriver {
         
         return this;
     }
+     * 
+     */
+
+
+    @Override
+    public PgSQLDriver connect(String user, String password) throws Exception {
+        if (this.connectionPoolDataSource == null) {
+            this.connectionPoolDataSource = new PGConnectionPoolDataSource();
+            this.connectionPoolDataSource.setServerName(this.getHost());
+            this.connectionPoolDataSource.setDatabaseName(this.getDatabaseName());
+            this.connectionPoolDataSource.setPortNumber(Integer.parseInt(this.getPort()));
+            this.connectionPoolDataSource.setUser(user);
+            this.connectionPoolDataSource.setPassword(password);
+        }
+
+        return this;
+    }
 
 
     @Override
     public Connection getConnection() {
+        try {
+            this.connection = this.connectionPoolDataSource.getConnection();
+        } catch (SQLException ex) {
+            Logger.getLogger(PgSQLDriver.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         return this.connection;
     }
 }

@@ -110,10 +110,14 @@ public class SQLMapper {
     public SQLMapper(String jndiName) 
             throws SQLException,
                    NamingException {
+        throw new NotImplementedException();
+        /*
         Connection conn = (Connection) new InitialContext().lookup(jndiName);
         if (conn.getMetaData().getURL().toLowerCase().split("://")[0].endsWith(SQLMapper.DB_VENDOR_POSTGRESQL)) {
             this.connectionDriver = new PgSQLDriver(conn);
         }
+         *
+         */
     }
 
 
