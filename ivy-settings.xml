@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivysettings>
+  <conf defaultResolver="chained"/>
+  <resolvers>
+    <chain name="chained">
+      <filesystem name="system jars">
+        <artifact pattern="${basedir}/../[artifact]/dist/[artifact].[ext]"/>
+        <artifact pattern="/usr/share/java/[artifact].[ext]"/>
+	      <artifact pattern="/usr/share/java/[artifact]-[revision].[ext]"/>
+        <artifact pattern="${basedir}/3rdparty/[artifact]-[revision].[ext]"/>
+        <artifact pattern="${basedir}/3rdparty/[artifact].[ext]"/>
+      </filesystem>
+      <ibiblio name="ibiblio" root="http://mirrors.ibiblio.org/pub/mirrors/maven2/" m2compatible="true"/>
+    </chain>
+  </resolvers>
+</ivysettings>
+

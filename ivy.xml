@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation=
+  "http://www.jayasoft.org/misc/ivy/samples/ivy.xsd">
+  
+  <info organisation="myself" module="ivytest"/>
+  <dependencies>
+    <dependency org="postgresql" name="postgresql" rev="9.1-901-1.jdbc4"/>
+  </dependencies>
+</ivy-module>
+
+<!--
+    ${file.reference.jackson-all-1.9.2.jar}:\
+    ${file.reference.ostermillerutils-1.08.00.jar}:\
+
+-->
+

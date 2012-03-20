@@ -1,74 +1,116 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- You may freely edit this file. See commented blocks below for -->
-<!-- some examples of how to customize the build. -->
-<!-- (If you delete it and reopen the project it will be recreated.) -->
-<!-- By default, only the Clean and Build commands use this build script. -->
-<!-- Commands such as Run, Debug, and Test only use this build script if -->
-<!-- the Compile on Save feature is turned off for the project. -->
-<!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
-<!-- in the project's Project Properties dialog box.-->
-<project name="SQLMap" default="default" basedir=".">
-    <description>Builds, tests, and runs the project SQLMap.</description>
-    <import file="nbproject/build-impl.xml"/>
-    <!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="dist" name="tiny-sqlmap">
+  <!-- Properties -->
+  <property name="debuglevel" value="source,lines,vars" />
 
-    There exist several targets which are by default empty and which can be 
-    used for execution of your tasks. These targets are usually executed 
-    before and after some main targets. They are: 
+  <!-- Directories -->
+  <property name="dir-src-main" value="src/main/java" />
+  <property name="dir-src-test" value="src/test/java" />
+  <property name="dir-lib" value="lib" />
+  <property name="dir-bin" value="bin" />
+  <property name="dir-dist" value="dist" />
 
-      -pre-init:                 called before initialization of project properties
-      -post-init:                called after initialization of project properties
-      -pre-compile:              called before javac compilation
-      -post-compile:             called after javac compilation
-      -pre-compile-single:       called before javac compilation of single file
-      -post-compile-single:      called after javac compilation of single file
-      -pre-compile-test:         called before javac compilation of JUnit tests
-      -post-compile-test:        called after javac compilation of JUnit tests
-      -pre-compile-test-single:  called before javac compilation of single JUnit test
-      -post-compile-test-single: called after javac compilation of single JUunit test
-      -pre-jar:                  called before JAR building
-      -post-jar:                 called after JAR building
-      -post-clean:               called after cleaning build products
+  <!-- Load properties from file -->
+  <property file="${basedir}/buildconf/build.properties" />
 
-    (Targets beginning with '-' are not intended to be called on their own.)
+  <!-- Classpath -->
+  <path id="classpath-build">
+    <fileset dir="${dir-lib}">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
 
-    Example of inserting an obfuscator after compilation could look like this:
+  <!-- Clean -->
+  <target name="clean">
+    <!--<delete dir="lib"/>-->
+    <delete dir="${dir-bin}" />
+    <delete dir="${dir-dist}" />
+  </target>
 
-        <target name="-post-compile">
-            <obfuscate>
-                <fileset dir="${build.classes.dir}"/>
-            </obfuscate>
-        </target>
+  <!-- Init -->
+  <target name="init">
+    <mkdir dir="${dir-bin}" />
+    <copy includeemptydirs="false" todir="${dir-bin}">
+      <fileset dir="${dir-src-main}">
+        <exclude name="**/*.java" />
+      </fileset>
+    </copy>
+  </target>
 
-    For list of available properties check the imported 
-    nbproject/build-impl.xml file. 
+  <!-- Build the code -->
+  <target name="build" depends="init,-ivy-retrieve">
+    <javac debug="true" debuglevel="${debuglevel}" srcdir="${dir-src-main}" destdir="${dir-bin}" includeantruntime="false">
+      <exclude name="**/test/**" />
+      <classpath refid="classpath-build" />
+    </javac>
+  </target>
 
+  <!-- Build the tests -->
+  <target name="build-tests" depends="build">
+    <copy includeemptydirs="false" todir="${dir-bin}">
+      <fileset dir="${dir-src-test}">
+        <exclude name="**/*.java" />
+      </fileset>
+    </copy>
+    <javac debug="true" debuglevel="${debuglevel}" srcdir="${dir-src-test}" destdir="${dir-bin}" includeantruntime="false">
+      <include name="**/test/*.java" />
+      <classpath refid="classpath-build" />
+    </javac>
+  </target>
 
-    Another way to customize the build is by overriding existing main targets.
-    The targets of interest are: 
+  <!-- Create jar file, exclude tests  -->
+  <target name="dist" depends="build">
+    <mkdir dir="${dir-dist}" />
+    <jar destfile="${dir-dist}/${ant.project.name}-${version}.jar" basedir="${dir-bin}">
+      <exclude name="**/test/**" />
+    </jar>
+  </target>
 
-      -init-macrodef-javac:     defines macro for javac compilation
-      -init-macrodef-junit:     defines macro for junit execution
-      -init-macrodef-debug:     defines macro for class debugging
-      -init-macrodef-java:      defines macro for class execution
-      -do-jar-with-manifest:    JAR building (if you are using a manifest)
-      -do-jar-without-manifest: JAR building (if you are not using a manifest)
-      run:                      execution of project 
-      -javadoc-build:           Javadoc generation
-      test-report:              JUnit report generation
+  <!-- Create a tar.bz2 archive containing the sources -->
+  <target name="src">
+    <mkdir dir="${dir-dist}" />
+    <tar destfile="${dir-dist}/${ant.project.name}-${version}.tar.bz2" compression="bzip2">
+      <tarfileset dir="${basedir}" prefix="${ant.project.name}-${version}">
+        <include name="src/**" />
+        <include name="lib/**" />
+        <include name="buildconf/**" />
+        <include name="build.xml" />
+        <include name="LICENSE" />
+        <include name="README" />
+      </tarfileset>
+    </tar>
+  </target>
 
-    An example of overriding the target for project execution could look like this:
+  <target name="-check-for-ivy">
+        <available property="have.ivy" resource="fr/jayasoft/ivy/ant/antlib.xml"/>
+    </target>
 
-        <target name="run" depends="SQLMap-impl.jar">
-            <exec dir="bin" executable="launcher.exe">
-                <arg file="${dist.jar}"/>
-            </exec>
-        </target>
+  <target name="-ivy-define" depends="-check-for-ivy" unless="have.ivy">
+  <taskdef resource="fr/jayasoft/ivy/ant/antlib.xml" uri="antlib:fr.jayasoft.ivy.ant">
+    <classpath>
+        <fileset dir="${ivy.home}">
+            <include name="ivy*.jar"/>
+            <include name="lib/*.jar"/>
+        </fileset>
+    </classpath>
+  </taskdef>
+  </target>
 
-    Notice that the overridden target depends on the jar target and not only on 
-    the compile target as the regular run target does. Again, for a list of available 
-    properties which you can use, check the target you are overriding in the
-    nbproject/build-impl.xml file. 
+  <target name="-ivy-retrieve" depends="-ivy-define" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+    <ivy:configure file="ivy-settings.xml" />
+    <ivy:resolve/> <!-- Tell Ivy to resolve dependencies -->
+    <ivy:retrieve/> <!-- Load dependencies to the project -->
+    <pathconvert property="ivy.classpath.computed" dirsep="/" pathsep=":">
+        <path>
+            <fileset dir="lib" includes="*.jar"/>
+        </path>
+        <map from="${basedir}${file.separator}" to=""/>
+    </pathconvert>
 
-    -->
+    <propertyfile file="nbproject/project.properties">
+        <entry operation="=" key="ivy.classpath" value="${ivy.classpath.computed}"/>
+    </propertyfile>
+  </target>
+
 </project>
+
