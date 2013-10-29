@@ -20,6 +20,7 @@ import de.suse.lib.sqlmap.drivers.H2EmbeddedDriver;
 import de.suse.lib.sqlmap.drivers.ApacheDerbyEmbeddedDriver;
 import de.suse.lib.sqlmap.drivers.DBConnectionDriver;
 import de.suse.lib.sqlmap.drivers.H2EmbeddedServerDriver;
+import de.suse.lib.sqlmap.drivers.MariaDbDriver;
 import de.suse.lib.sqlmap.drivers.PgSQLDriver;
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,6 +31,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -39,7 +41,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -52,6 +53,8 @@ public class SQLMapper {
     private static final String DB_VENDOR_POSTGRESQL = "postgresl";
     private static final String DB_VENDOR_ORACLE = "oracle";
     private static final String DB_VENDOR_H2 = "h2";
+    private static final String DB_VENDOR_MYSQL = "mysql";
+    private static final String DB_VENDOR_MARIADB = "mariadb";
 
     private Map<String, ConnectionInfo> connectionInfo;
     private DBConnectionDriver connectionDriver;
@@ -164,6 +167,8 @@ public class SQLMapper {
             this.connectionDriver = new H2EmbeddedDriver(info);
         } else if (info.getVendor().equals("h2:tcp")) {
             this.connectionDriver = new H2EmbeddedServerDriver(info);
+        } else if (info.getVendor().equals(SQLMapper.DB_VENDOR_MARIADB) || info.getVendor().equals(SQLMapper.DB_VENDOR_MYSQL)) {
+            this.connectionDriver = new MariaDbDriver(info.getUrl()).connect(info.getUser(), info.getPassword());
         } else {
             throw new Exception(String.format("Vendor \"%s\" is not supported.", info.getVendor()));
         }
@@ -426,7 +431,7 @@ public class SQLMapper {
                 Logger.getLogger(SQLMapper.class.getName()).log(Level.WARNING, null, ex);
             }
         }
-
+        
         return buff.toString();
     }
 
@@ -456,5 +461,13 @@ public class SQLMapper {
      */
     public String getDatabaseName() {
         return this.connectionDriver.getDatabaseName();
+    }
+
+    
+    /**
+     * Get database metadata.
+     */
+    public DatabaseMetaData getDatabaseMetadata() {
+        return this.connectionDriver.getDatabaseMetaData();
     }
 }

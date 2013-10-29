@@ -20,6 +20,7 @@ package de.suse.lib.sqlmap.drivers;
 import de.suse.lib.sqlmap.ConnectionCallback;
 import java.net.URISyntaxException;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -180,4 +181,15 @@ public abstract class GenericDriver implements DBConnectionDriver {
         this.callback = callback;
     }
 
+
+    @Override
+    public DatabaseMetaData getDatabaseMetaData() {
+        try {
+            return this.connection.getMetaData();
+        } catch (SQLException ex) {
+            Logger.getLogger(GenericDriver.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return null;
+    }
 }

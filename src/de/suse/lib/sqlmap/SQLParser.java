@@ -43,6 +43,7 @@ public class SQLParser {
     private static final int TYPE_LONG = 6;
     private static final int TYPE_SHORT = 7;
     private static final int TYPE_BOOLEAN = 8;
+    private static final int TYPE_RAW = 9;
 
     private final String query;
     private List<Value> values;
@@ -92,6 +93,7 @@ public class SQLParser {
         this.typemap.put("time", SQLParser.TYPE_TIME);
         this.typemap.put("timestamp", SQLParser.TYPE_TIMESTAMP);
         this.typemap.put("boolean", SQLParser.TYPE_BOOLEAN);
+        this.typemap.put("raw", SQLParser.TYPE_RAW);
 
         this.dateFormatter = new SimpleDateFormat("yyyy.MM.dd");
         this.timeFormatter = new SimpleDateFormat("HH:mm:ss");

@@ -33,6 +33,7 @@ import java.sql.SQLWarning;
 import java.sql.Struct;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Executor;
 
 /**
  *
@@ -330,5 +331,30 @@ class EmbeddedConnection implements Connection {
     @Override
     public boolean isWrapperFor(Class<?> type) throws SQLException {
         return this.conn.isWrapperFor(type);
+    }
+
+    @Override
+    public void setSchema(String schema) throws SQLException {
+        this.conn.setSchema(schema);
+    }
+
+    @Override
+    public String getSchema() throws SQLException {
+        return this.conn.getSchema();
+    }
+
+    @Override
+    public void abort(Executor executor) throws SQLException {
+        this.conn.abort(executor);
+    }
+
+    @Override
+    public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
+        this.conn.setNetworkTimeout(executor, milliseconds);
+    }
+
+    @Override
+    public int getNetworkTimeout() throws SQLException {
+        return this.conn.getNetworkTimeout();
     }
 }

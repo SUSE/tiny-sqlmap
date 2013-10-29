@@ -19,6 +19,7 @@ package de.suse.lib.sqlmap.drivers;
 
 import de.suse.lib.sqlmap.ConnectionCallback;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 
 /**
  * @author Bo Maryniuk
@@ -56,4 +57,6 @@ public interface DBConnectionDriver {
     public void setConnectionCallback(ConnectionCallback callback);
 
     public String getDatabaseName();
+    
+    public DatabaseMetaData getDatabaseMetaData();
 }
