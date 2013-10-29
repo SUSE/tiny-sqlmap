@@ -17,11 +17,13 @@
 package de.suse.lib.sqlmap.drivers;
 
 import java.net.URISyntaxException;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.mariadb.jdbc.MySQLDataSource;
 
 
 /**
@@ -32,6 +34,7 @@ public class MariaDbDriver extends GenericDriver {
     private final static String PROTO = "jdbc:mysql://";
     private boolean useSSL = true;
     private final static String DRIVER = "org.mariadb.jdbc.Driver";
+    private MySQLDataSource dataSource;
 
     public MariaDbDriver(String url) 
             throws URISyntaxException,
@@ -55,8 +58,7 @@ public class MariaDbDriver extends GenericDriver {
     }
 
 
-    @Override
-    public MariaDbDriver connect(String user, String password) throws Exception {
+    public MariaDbDriver _connect(String user, String password) throws Exception {
         Properties properties = new Properties();
         properties.setProperty("user", user);
         properties.setProperty("password", password);
@@ -76,4 +78,30 @@ public class MariaDbDriver extends GenericDriver {
         return this;
     }
 
+    @Override
+    public GenericDriver connect(String user, String password) throws Exception {
+        if (this.dataSource == null) {
+            this.dataSource = new MySQLDataSource();
+            this.dataSource.setServerName(this.getHost());
+            this.dataSource.setDatabaseName(this.getDatabaseName());
+            this.dataSource.setPortNumber(Integer.parseInt(this.getPort()));
+            this.dataSource.setUser(user);
+            this.dataSource.setPassword(password);
+        }
+
+        return this;
+    }
+    
+    
+
+    @Override
+    public Connection getConnection() {
+        try {
+            this.connection = this.dataSource.getConnection();
+        } catch (SQLException ex) {
+            Logger.getLogger(MariaDbDriver.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return this.connection;
+    }
 }

@@ -42,7 +42,6 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.NamingException;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * SQL Mapper
@@ -100,7 +99,7 @@ public class SQLMapper {
      */
     public SQLMapper(Connection connection) throws SQLException {
         //this.connectionDriver
-        throw new NotImplementedException();
+        throw new SQLException();
     }
 
     
@@ -113,7 +112,7 @@ public class SQLMapper {
     public SQLMapper(String jndiName) 
             throws SQLException,
                    NamingException {
-        throw new NotImplementedException();
+        throw new SQLException();
         /*
         Connection conn = (Connection) new InitialContext().lookup(jndiName);
         if (conn.getMetaData().getURL().toLowerCase().split("://")[0].endsWith(SQLMapper.DB_VENDOR_POSTGRESQL)) {
