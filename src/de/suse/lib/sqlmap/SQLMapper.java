@@ -293,10 +293,15 @@ public class SQLMapper {
                 System.err.println(queryTemplates[i]);
                 System.err.println("-----");
             }
+            
+            String query = queryTemplates[i].trim();
+            if (query.isEmpty()) {
+                continue;
+            }
 
             PreparedStatement statement = null;
             try {
-                statement = new SQLParser(queryTemplates[i]).parse(params).prepare(this.connectionDriver.getConnection());
+                statement = new SQLParser(query).parse(params).prepare(this.connectionDriver.getConnection());
             } catch (SQLIntegrityConstraintViolationException ex) {
                 if (this.debug) {
                     Logger.getLogger(SQLMapper.class.getName()).log(Level.WARNING, "Integrity error while preparing: {0}", ex.getLocalizedMessage());
