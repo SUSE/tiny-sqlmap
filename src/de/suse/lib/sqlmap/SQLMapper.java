@@ -62,12 +62,31 @@ public class SQLMapper {
     private boolean debug = false;
     private String tag;
     private boolean stderrVerbose = false;
+    private String resourceRoot;
     
     
     private void init(Properties config) throws SQLException {
         this.connectionInfo = new HashMap<String, ConnectionInfo>();
         this.parseConnectionInfo(config);
         this.connectionCallback = null;
+    }
+
+    /**
+     * Set resource root place.
+     * 
+     * @param resourceRoot 
+     */
+    public void setResourceRoot(String resourceRoot) {
+        if (resourceRoot == null) {
+            resourceRoot = "";
+        } else {
+            resourceRoot = resourceRoot.trim();
+            if (!resourceRoot.endsWith(".")) {
+                resourceRoot += '.';
+            }
+        }
+
+        this.resourceRoot = resourceRoot;
     }
 
 
@@ -242,6 +261,10 @@ public class SQLMapper {
         if (this.connectionDriver == null || !this.connectionDriver.isConnected()) {
             this.connect(null); // reuse last tag
         }
+        
+        if (params == null) {
+            params = new HashMap();
+        }
 
         ResultSet result = null;
         String[] queryTemplates = this.getTemplateFromResource(querypath).split(";");
@@ -398,7 +421,8 @@ public class SQLMapper {
         } else if (resource.toLowerCase().startsWith("file://")) {
             System.err.println("Not yet implemented.");
         } else if (this.resourcesClass != null) {
-            return this.getTemplateFromResource(this.resourcesClass.getResourceAsStream("/" + resource.replaceAll("\\.", "/") + ".tsql"));
+            return this.getTemplateFromResource(this.resourcesClass.getResourceAsStream("/" 
+                    + (this.resourceRoot + resource).replaceAll("\\.", "/") + ".tsql"));
         }
         
         return null;
