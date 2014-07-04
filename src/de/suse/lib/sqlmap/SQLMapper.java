@@ -41,7 +41,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * SQL Mapper
@@ -97,7 +96,7 @@ public class SQLMapper {
      */
     public SQLMapper(Connection connection) throws SQLException {
         //this.connectionDriver
-        throw new NotImplementedException();
+        throw new SQLException();
     }
 
     
